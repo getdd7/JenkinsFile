@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/getdd7/Jenkins1.git'
+            }
+        }
+
+
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("getdd07/test", "-f /projects/dockerfile .")
+                }
+            }
+        }
+
+
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-credentials') {
+                        docker.image("getdd07/test").push('latest')
+                    }
+                }
+            }
+        }
+        
+    }
+}
